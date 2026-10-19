@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABS STUDIO | The Golden Vault</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+    html { scroll-behavior: smooth; }
+    body { background: #000; color: #E0E0E0; font-family: 'Montserrat'; overflow-x: hidden; }
+    
+    /* CUSTOM CURSOR */
+    .cursor { position: fixed; width: 20px; height: 20px; border: 2px solid #FFD700; border-radius: 50%; pointer-events: none; z-index: 10000; transition: 0.1s; mix-blend-mode: difference; }
+    .cursor-follower { position: fixed; width: 40px; height: 40px; background: rgba(255,215,0,0.1); border-radius: 50%; pointer-events: none; z-index: 9999; transition: 0.3s; }
+    
+    /* LOADER */
+    .loader { position: fixed; width: 100%; height: 100%; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; }
+    .loader h1 { font-family: 'Cinzel'; font-size: 90px; color: #FFD700; animation: vaultOpen 2.5s forwards; }
+    @keyframes vaultOpen { 0%{letter-spacing:30px; opacity:0; filter:blur(10px);} 100%{letter-spacing:8px; opacity:1; filter:blur(0);} }
+    
+    /* NAV */
+    nav { position: fixed; width: 100%; padding: 30px 8%; display: flex; justify-content: space-between; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,215,0,0.1); z-index: 1000; }
+    nav h1 { font-family: 'Cinzel'; color: #FFD700; font-size: 28px; letter-spacing: 4px; }
+    nav a { color: #fff; text-decoration: none; margin: 0 25px; font-size: 16px; letter-spacing: 2px; transition: 0.3s; }
+    nav a:hover { color: #FFD700; }
+    
+    /* SECTIONS */
+    section { min-height: 100vh; padding: 150px 8%; }
+    .sec-title { font-family: 'Cinzel'; font-size: 80px; color: #FFD700; text-align: center; margin-bottom: 80px; }
+    
+    /* HOME */
+    #home { display: flex; align-items: center; justify-content: center; position: relative; background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.1) 0%, #000 70%); }
+    .home-text { text-align: center; z-index: 2; }
+    .home-text h2 { font-family: 'Cinzel'; font-size: 130px; color: #FFD700; line-height: 0.9; text-shadow: 0 0 50px rgba(255,215,0,0.3); }
+    .home-text p { font-size: 18px; letter-spacing: 12px; margin: 30px 0; color: #aaa; }
+    .scroll-down { position: absolute; bottom: 50px; color: #FFD700; animation: bounce 2s infinite; font-size: 14px; letter-spacing: 3px; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(15px);} }
+    
+    /* SERVICES - DETAILED CARDS */
+    #services { background: #050505; }
+    .service-vault { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .gold-card {
+      background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+      border: 1px solid rgba(255,215,0,0.15); border-radius: 15px; padding: 50px 35px;
+      transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden;
+    }
+    .gold-card:hover { transform: translateY(-25px); border-color: #FFD700; box-shadow: 0 40px 80px rgba(255,215,0,0.2); }
+    .gold-card .icon { font-size: 45px; margin-bottom: 25px; }
+    .gold-card h3 { font-family: 'Cinzel'; font-size: 26px; color: #FFD700; margin-bottom: 20px; }
+    .gold-card p { color: #aaa; line-height: 1.8; margin-bottom: 20px; }
+    .gold-card ul { list-style: none; color: #ccc; }
+    .gold-card ul li { margin: 8px 0; padding-left: 20px; position: relative; }
+    .gold-card ul li::before { content: '▹'; color: #FFD700; position: absolute; left: 0; }
+    
+    /* GALLERY - CREATIVE WALL */
+    #gallery { background: #000; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 300px; gap: 20px; }
+    .gallery-item { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,215,0,0.1); transition: 0.5s; }
+    .gallery-item:hover { transform: scale(0.98); border-color: #FFD700; box-shadow: 0 0 40px rgba(255,215,0,0.3); }
+    .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-item.big { grid-column: span 2; grid-row: span 2; }
+    .gallery-item.wide { grid-column: span 2; }
+    .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 25px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); opacity: 0; transition: 0.4s; }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay h4 { font-family: 'Cinzel'; color: #FFD700; font-size: 22px; }
+    
+    /* CONTACT - FULLY ANIMATED */
+    #contact { background: radial-gradient(circle at center, #111 0%, #000 100%); text-align: center; }
+    .contact-box { max-width: 700px; margin: 60px auto; padding: 60px; border: 2px solid rgba(255,215,0,0.2); border-radius: 20px; position: relative; }
+    .contact-box::before {
+      content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(45deg, #FFD700, #000, #FFD700);
+      border-radius: 20px; z-index: -1; animation: borderGlow 3s linear infinite;
+    }
+    @keyframes borderGlow { 0%{filter:hue-rotate(0deg);} 100%{filter:hue-rotate(360deg);} }
+    .contact-box input, .contact-box textarea {
+      width: 100%; padding: 20px; margin: 20px 0; background: #0a0a0a; 
+      border: 2px solid #222; border-radius: 10px; color: #FFD700; font-size: 18px;
+      transition: 0.3s;
+    }
+    .contact-box input:focus, .contact-box textarea:focus { border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.3); outline: none; }
+    .btn-final {
+      padding: 25px 80px; background: linear-gradient(45deg, #FFD700, #D4AF37); border: none; color: #000;
+      font-family: 'Cinzel'; font-size: 20px; font-weight: 700; letter-spacing: 3px; border-radius: 50px;
+      transition: 0.4s; box-shadow: 0 0 30px rgba(255,215,0,0.4);
+    }
+    .btn-final:hover { transform: scale(1.1); box-shadow: 0 0 60px #FFD700; }
+    
+    footer { text-align: center; padding: 40px; border-top: 1px solid rgba(255,215,0,0.1); }
+ 
+ /* MOBILE RESPONSIVE DESIGN */
+.menu-toggle {
+  display: none;
+  background: #080808;
+  color: #FFD700;
+  border: 1px solid #FFD700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  nav {
+    padding: 20px 5%;
+    align-items: center;
+  }
+
+  nav a {
+    margin: 0 10px;
+    font-size: 13px;
+  }
+
+  .sec-title {
+    font-size: 55px;
+    margin-bottom: 40px;
+  }
+
+  .home-text h2 {
+    font-size: 90px;
+  }
+
+  .service-vault {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 240px;
+  }
+
+  .contact-box {
+    padding: 35px 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  * {
+    cursor: auto;
+  }
+
+  .cursor,
+  .cursor-follower {
+    display: none;
+  }
+
+  .loader h1 {
+    font-size: 30px;
+    letter-spacing: 3px;
+  }
+
+  nav {
+    padding: 14px 5%;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  nav h1 {
+    font-size: 22px;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 12px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  nav a {
+    margin: 0;
+    padding: 14px 5px;
+    border-top: 1px solid #29220a;
+    font-size: 13px;
+  }
+
+  section {
+    min-height: auto;
+    padding: 100px 6% 60px;
+  }
+
+  #home {
+    min-height: 100vh;
+  }
+
+  .home-text h2 {
+    font-size: clamp(50px, 15vw, 80px);
+    line-height: 1;
+  }
+
+  .home-text p {
+    font-size: 10px;
+    letter-spacing: 3px;
+    line-height: 1.8;
+  }
+
+  .scroll-down {
+    bottom: 25px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .sec-title {
+    font-size: clamp(30px, 9vw, 44px);
+    margin-bottom: 30px;
+  }
+
+  .service-vault {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .gold-card {
+    padding: 28px 22px;
+  }
+
+  .gold-card:hover {
+    transform: none;
+  }
+
+  .gold-card h3 {
+    font-size: 21px;
+  }
+
+  .gold-card p {
+    font-size: 14px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 240px;
+    gap: 14px;
+  }
+
+  .gallery-item.big,
+  .gallery-item.wide {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .gallery-overlay {
+    opacity: 1;
+    padding: 15px;
+  }
+
+  .gallery-overlay h4 {
+    font-size: 17px;
+  }
+
+  .contact-box {
+    margin: 25px auto;
+    padding: 22px 16px;
+  }
+
+  .contact-box input,
+  .contact-box textarea {
+    padding: 14px;
+    margin: 10px 0;
+    font-size: 16px;
+  }
+
+  .btn-final {
+    width: 100%;
+    padding: 17px 10px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  footer {
+    padding: 25px 12px;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+}
+  
+ </style>
+</head>
+<body>
+  <div class="loader"><h1>ABS STUDIO</h1></div>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <nav>
+    <h1>ABS</h1>
+    <div>
+      <a href="#home">HOME</a>
+      <a href="#services">SERVICES</a>
+      <a href="#gallery">GALLERY</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="home-text">
+      <h2>ABS</h2>
+      <h2>STUDIO</h2>
+      <p>THE GOLDEN VAULT OF CREATION</p>
+    </div>
+    <div class="scroll-down">SCROLL TO ENTER THE VAULT ↓</div>
+  </section>
+
+  <!-- SERVICES - FULL DETAILS -->
+  <section id="services">
+    <h2 class="sec-title">OUR CRAFT</h2>
+    <div class="service-vault">
+      <div class="gold-card">
+        <div class="icon">💳</div>
+        <h3>Bespoke Cards</h3>
+        <p>Luxury business cards that make first impressions unforgettable.</p>
+        <ul>
+          <li>Gold Foil & Embossing</li>
+          <li>Letterpress & Spot UV</li>
+          <li>Premium 350gsm Paper</li>
+          <li>Custom Die-Cut Shapes</li>
+        </ul>
+      </div>
+      <div class="gold-card">
+        <div class="icon">💻</div>
+        <h3>Website Design</h3>
+        <p>Websites that don't just look good. They sell, convert, and impress.</p>
+        <ul>
+          <li>Landing Pages & Portfolios</li>
+          <li>E-commerce & Business Sites</li>
+          <li>Responsive & Lightning Fast</li>
+          <li>SEO + Animation Included</li>
+        </ul>
+      </div>
+      <div class="gold-card">
+        <div class="icon">📢</div>
+        <h3>Banners & Social Posts</h3>
+        <p>Scroll-stopping creatives for ads, events, and social media.</p>
+        <ul>
+          <li>Instagram, Facebook, LinkedIn Posts</li>
+          <li>Event Banners & Flyers</li>
+          <li>Ad Creatives & Thumbnails</li>
+          <li>Brand Identity Kit</li>
+        </ul>
+      </div>
+      <div class="gold-card">
+        <div class="icon">🎬</div>
+        <h3>Video Editing</h3>
+        <p>Cinematic edits that tell your story with emotion and impact.</p>
+        <ul>
+          <li>Reels, Ads, Promo Videos</li>
+          <li>Color Grading & VFX</li>
+          <li>Motion Graphics & Transitions</li>
+          <li>Sound Design & Mixing</li>
+        </ul>
+      </div>
+      <div class="gold-card">
+        <div class="icon">👑</div>
+        <h3>Brand Alchemy</h3>
+        <p>We transform ideas into gold-standard brands.</p>
+        <ul>
+          <li>Logo Design & Rebranding</li>
+          <li>Color Palette & Typography</li>
+          <li>Brand Guidelines</li>
+          <li>Complete Visual Identity</li>
+        </ul>
+      </div>
+      <div class="gold-card">
+        <div class="icon">✨</div>
+        <h3>Custom Creation</h3>
+        <p>Got a wild idea? We will forge it in gold.</p>
+        <ul>
+          <li>Product Packaging</li>
+          <li>Presentation Decks</li>
+          <li>3D Mockups & Visuals</li>
+          <li>Anything Creative</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY - FULLY LOADED -->
+  <section id="gallery">
+    <h2 class="sec-title">THE GALLERY</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item big">
+        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb" alt="Poster">
+        <div class="gallery-overlay"><h4>Luxury Event Poster</h4></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5" alt="Card">
+        <div class="gallery-overlay"><h4>Gold Foil Card</h4></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7" alt="Social">
+        <div class="gallery-overlay"><h4>Social Media Campaign</h4></div>
+      </div>
+      <div class="gallery-item wide">
+        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f" alt="Website">
+        <div class="gallery-overlay"><h4>Premium Website Design</h4></div>
+      </div>
+      <div class="gallery-item">
+        <video src="" poster="https://images.unsplash.com/photo-1574717024453-354056aafa98" controls></video>
+        <div class="gallery-overlay"><h4>Video Edit Reel</h4></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984" alt="Banner">
+        <div class="gallery-overlay"><h4>Corporate Banner</h4></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1558655146-d09347e92766" alt="Branding">
+        <div class="gallery-overlay"><h4>Brand Identity</h4></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT - ANIMATED -->
+  <section id="contact">
+    <h2 class="sec-title">REQUEST ENTRY</h2>
+    <p style="font-size: 20px; color: #aaa; margin-bottom: 20px;">Only for those who want GOLD, not ordinary.</p>
+    <div class="contact-box">
+      <input type="text" placeholder="Your Name">
+      <input type="email" placeholder="Your Email">
+      <input type="text" placeholder="Service Needed - Cards / Website / Video / etc">
+      <textarea rows="5" placeholder="Describe your vision in detail..."></textarea>
+      <button class="btn-final">SEND GOLDEN REQUEST</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 ABS STUDIO | FORGED IN BLACK & GOLD</p>
+  </footer>
+
+  <script>
+    // CUSTOM CURSOR
+    const cursor = document.querySelector('.cursor');
+    const follower = document.querySelector('.cursor-follower');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX - 10 + 'px';
+      cursor.style.top = e.clientY - 10 + 'px';
+      setTimeout(() => {
+        follower.style.left = e.clientX - 20 + 'px';
+        follower.style.top = e.clientY - 20 + 'px';
+      }, 100);
+    });
+    
+    // LOADER HIDE
+    window.addEventListener('load', () => {
+      setTimeout(() => { document.querySelector('.loader').style.display = 'none'; }, 2500);
+    });
+  </script>
+</body>
+</html>
